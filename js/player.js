@@ -108,20 +108,6 @@ const PAUSE_AD_CONFIG = {
 
 // 页面加载
 document.addEventListener('DOMContentLoaded', function () {
-    // 先检查用户是否已通过密码验证
-    if (!isPasswordVerified()) {
-        // 隐藏加载提示
-        document.getElementById('loading').style.display = 'none';
-        return;
-    }
-
-    initializePageContent();
-});
-
-// 监听密码验证成功事件
-document.addEventListener('passwordVerified', () => {
-    document.getElementById('loading').style.display = 'block';
-
     initializePageContent();
 });
 

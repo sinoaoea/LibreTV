@@ -53,39 +53,41 @@ let doubanCurrentTag = '热门';
 let doubanPageStart = 0;
 const doubanPageSize = 16; // 一次显示的项目数量
 
+function isDoubanEnabled() {
+    return localStorage.getItem('doubanEnabled') === 'true';
+}
+
+function updateDoubanToggleUI(isEnabled) {
+    const doubanToggle = document.getElementById('doubanToggle');
+    if (!doubanToggle) return;
+
+    doubanToggle.checked = isEnabled;
+
+    const toggleBg = doubanToggle.nextElementSibling;
+    const toggleDot = toggleBg ? toggleBg.nextElementSibling : null;
+    if (!toggleBg || !toggleDot) return;
+
+    toggleBg.classList.toggle('bg-pink-600', isEnabled);
+    toggleDot.classList.toggle('translate-x-6', isEnabled);
+}
+
+window.isDoubanEnabled = isDoubanEnabled;
+
 // 初始化豆瓣功能
 function initDouban() {
     // 设置豆瓣开关的初始状态
     const doubanToggle = document.getElementById('doubanToggle');
     if (doubanToggle) {
-        const isEnabled = localStorage.getItem('doubanEnabled') === 'true';
-        doubanToggle.checked = isEnabled;
-        
-        // 设置开关外观
-        const toggleBg = doubanToggle.nextElementSibling;
-        const toggleDot = toggleBg.nextElementSibling;
-        if (isEnabled) {
-            toggleBg.classList.add('bg-pink-600');
-            toggleDot.classList.add('translate-x-6');
-        }
+        updateDoubanToggleUI(isDoubanEnabled());
         
         // 添加事件监听
-        doubanToggle.addEventListener('change', function(e) {
+        doubanToggle.onchange = function(e) {
             const isChecked = e.target.checked;
             localStorage.setItem('doubanEnabled', isChecked);
-            
-            // 更新开关外观
-            if (isChecked) {
-                toggleBg.classList.add('bg-pink-600');
-                toggleDot.classList.add('translate-x-6');
-            } else {
-                toggleBg.classList.remove('bg-pink-600');
-                toggleDot.classList.remove('translate-x-6');
-            }
-            
+            updateDoubanToggleUI(isChecked);
             // 更新显示状态
             updateDoubanVisibility();
-        });
+        };
         
         // 初始更新显示状态
         updateDoubanVisibility();
@@ -107,7 +109,7 @@ function initDouban() {
     setupDoubanRefreshBtn();
     
     // 初始加载热门内容
-    if (localStorage.getItem('doubanEnabled') === 'true') {
+    if (isDoubanEnabled()) {
         renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
     }
 }
@@ -117,7 +119,7 @@ function updateDoubanVisibility() {
     const doubanArea = document.getElementById('doubanArea');
     if (!doubanArea) return;
     
-    const isEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    const isEnabled = isDoubanEnabled();
     const isSearching = document.getElementById('resultsArea') && 
         !document.getElementById('resultsArea').classList.contains('hidden');
     
@@ -282,7 +284,7 @@ function renderDoubanMovieTvSwitch() {
             setupDoubanRefreshBtn();
             
             // 初始加载热门内容
-            if (localStorage.getItem('doubanEnabled') === 'true') {
+            if (isDoubanEnabled()) {
                 renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
             }
         }
@@ -308,7 +310,7 @@ function renderDoubanMovieTvSwitch() {
             setupDoubanRefreshBtn();
             
             // 初始加载热门内容
-            if (localStorage.getItem('doubanEnabled') === 'true') {
+            if (isDoubanEnabled()) {
                 renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
             }
         }
